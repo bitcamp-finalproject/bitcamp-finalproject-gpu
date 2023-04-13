@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bitcamp.app.dao.ReplyDao">
+
+  <resultMap type="reply" id="replyMap">
+    <id column="reply_no" property="replyNo"/>
+    <result column="board_no" property="boardNo"/>
+    <result column="content" property="content"/>
+    <result column="write_dt" property="writeDt"/>
+    
+        <association property="writer" javaType="member">
+      <id column="member_no" property="no"/>
+      <result column="name" property="nickname"/>
+      <result column="filename" property="profilePhoto"/>
+    </association>
+  </resultMap>
+  
+   <insert id="insert" parameterType="reply" 
+          useGeneratedKeys="true" keyProperty="replyNo" keyColumn="reply_no">
+    insert into aim_reply(board_no, member_no, content)
+    values(#{boardNo}, #{writer.no}, #{content})
+   </insert>
+  
+   <select id="findByNo" resultMap="replyMap" parameterType="int">
+			SELECT 
+			    r.reply_no, 
+			    r.board_no, 
+			    r.member_no, 
+			    r.content, 
+			    r.write_dt, 
+			    m.name, 
+			    m.filename 
+			FROM 
+			    aim_reply r
+			    INNER JOIN aim_member m ON m.member_no = r.member_no  
+			    LEFT JOIN (
+			        SELECT 
+			            reply_no, 
+			            COUNT(*) as report_cnt
+			        FROM 
+			            aim_report_reply 
+			        GROUP BY 
+			            reply_no 
+			        HAVING 
+			            COUNT(*) &lt;= 5
+			    ) rr ON r.reply_no = rr.reply_no 
+			WHERE 
+			    r.board_no=#{no} 
+			    AND (rr.report_cnt IS NULL OR rr.report_cnt &lt;= 5)
+			ORDER BY 
+			    r.reply_no DESC;
+   </select>
+  
+   <select id="countCommentLike" resultType="int" parameterType="int">
+	  SELECT COUNT(DISTINCT member_no) AS like_count
+	  FROM aim_like_reply
+	  WHERE reply_no = #{no};
+   </select>
+   
+   <delete id="commentDelete" parameterType="int">
+    delete from aim_reply
+    where reply_no=#{no}
+   </delete>
+  
+   <insert id="like" parameterType="reply">
+    insert into aim_like_reply(member_no, reply_no)
+    values(#{memberNo}, #{replyNo})
+   </insert>
+   
+   <delete id="unlike" parameterType="reply">
+    delete from aim_like_reply 
+    where member_no=#{memberNo} and reply_No=#{replyNo} 
+   </delete>
+  
+    <delete id="unlikeAll" parameterType="int">
+    delete from aim_like_reply 
+    where reply_No=#{no} 
+   </delete>
+  
+   <select id="checkLikeState" resultType="int" parameterType="reply">
+    select 
+     count(reply_no)
+    from 
+     aim_like_reply
+    where 
+     member_no=#{memberNo} and reply_no=#{replyNo}
+   </select>
+   
+  
+  </mapper>
+  

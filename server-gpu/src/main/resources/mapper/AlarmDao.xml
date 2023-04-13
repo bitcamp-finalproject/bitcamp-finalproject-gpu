@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bitcamp.app.dao.AlarmDao">
+
+  <resultMap type="alarmLog" id="alarmlogMap">
+    <id column="log_no" property="no"/>
+    <result column="type_no" property="typeNo"/>
+    <result column="member_no" property="userNo"/>
+    <result column="content" property="content"/>
+    <result column="read_flag" property="readFlag"/>
+    <result column="alarm_dt" property="alarmDate"/>
+    
+    <association property="otherMember" javaType="member">
+	    <id column="other_no" property="no"/>
+	    <result column="name" property="nickname"/>
+	    <result column="email" property="email"/>
+	    <result column="pw" property="password"/>
+	    <result column="created_dt" property="createdDate"/>
+	    <result column="gender" property="gender"/>
+	    <result column="filename" property="profilePhoto"/>
+	    <result column="addr" property="basicAddress"/>
+	    <result column="pt" property="point"/>
+	    <result column="info" property="information"/>
+	    <result column="birth_dt" property="birthDate"/>
+	    <result column="tel" property="tel"/>
+	    <result column="pw_update_dt" property="passwordDate"/>
+	    <result column="state" property="accountState"/>
+	    <result column="auth" property="authLevel"/>
+    </association>
+    
+    <association property="board" javaType="board">
+	    <id column="board_no" property="boardNo"/>
+	    <result column="origin_content" property="originContent"/>
+	    <result column="trans_content" property="transContent"/>
+	    <result column="tag" property="tag"/>
+	    <result column="like_cnt" property="likeCnt"/>
+	    <result column="view_cnt" property="viewCnt"/>
+	    <result column="board_public" property="boardPublic"/>
+	    <result column="reply_public" property="replyPublic"/>
+	    <result column="report_cnt" property="reportCnt"/>
+	    <result column="write_dt" property="writeDt"/>
+	    <result column="update_dt" property="updateDt"/>
+	    <result column="img_no" property="photoNo"/>
+	    <result column="img_filename" property="fileName"/>
+	    
+	    <association property="writer" javaType="member">
+	      <id column="w_member_no" property="no"/>
+	      <result column="w_name" property="nickname"/>
+	      <result column="w_filename" property="profilePhoto"/>
+	    </association>
+    </association>
+    
+    <association property="reply" javaType="reply">
+	    <id column="reply_no" property="replyNo"/>
+	    <result column="r_board_no" property="boardNo"/>
+	    <result column="r_content" property="content"/>
+    </association>
+          
+  </resultMap>
+  
+
+  <select id="findAll" resultMap="alarmlogMap" parameterType="int">
+  SELECT
+    al.log_no,
+    al.type_no,
+    al.member_no,
+    al.content,
+    al.read_flag,
+    al.alarm_dt,
+    at.alarm_type,
+    b.board_no,
+    b.member_no,
+    b.origin_content,
+    b.trans_content,
+    b.tag,
+    b.like_cnt,
+    b.view_cnt,
+    b.board_public,
+    b.reply_public,
+    b.report_cnt,
+    b.write_dt,
+    b.update_dt,
+    gi.img_no,
+    gi.img_filename,
+    m.member_no as other_no,
+    m.name,
+    m.email,
+    m.created_dt,
+    m.gender,
+    m.filename,
+    m.addr,
+    m.pt,
+    m.info,
+    m.birth_dt,
+    m.tel,
+    m.pw_update_dt,
+    m.state,
+    m.auth,
+    w.name AS w_name,
+    w.filename AS w_filename,
+    r.reply_no,
+    r.board_no AS r_board_no,
+    r.content AS r_content
+FROM
+    aim_alarm_log al
+        JOIN
+    aim_alarm_type at ON al.type_no = at.type_no
+        JOIN
+    aim_member m ON al.other_no = m.member_no
+        LEFT JOIN
+    aim_board b ON al.board_no = b.board_no
+        JOIN
+    aim_generated_img gi ON b.board_no = gi.board_no
+        JOIN
+    aim_member w ON b.member_no = w.member_no
+        LEFT JOIN
+    aim_reply r ON b.board_no = r.board_no
+        AND al.other_no = r.member_no
+WHERE
+    al.member_no = #{no}
+    AND at.alarm_type = 'reply'
+UNION
+SELECT
+    al.log_no,
+    al.type_no,
+    al.member_no,
+    al.content,
+    al.read_flag,
+    al.alarm_dt,
+    at.alarm_type,
+    b.board_no,
+    b.member_no,
+    b.origin_content,
+    b.trans_content,
+    b.tag,
+    b.like_cnt,
+    b.view_cnt,
+    b.board_public,
+    b.reply_public,
+    b.report_cnt,
+    b.write_dt,
+    b.update_dt,
+    gi.img_no,
+    gi.img_filename,
+    m.member_no as other_no,
+    m.name,
+    m.email,
+    m.created_dt,
+    m.gender,
+    m.filename,
+    m.addr,
+    m.pt,
+    m.info,
+    m.birth_dt,
+    m.tel,
+    m.pw_update_dt,
+    m.state,
+    m.auth,
+    w.name AS w_name,
+    w.filename AS w_filename,
+    NULL AS reply_no,
+    NULL AS r_board_no,
+    NULL AS r_content
+FROM
+    aim_alarm_log al
+        JOIN
+    aim_alarm_type at ON al.type_no = at.type_no
+        JOIN
+    aim_member m ON al.other_no = m.member_no
+        LEFT JOIN
+    aim_board b ON al.board_no = b.board_no
+        JOIN
+    aim_generated_img gi ON b.board_no = gi.board_no
+        JOIN
+    aim_member w ON b.member_no = w.member_no
+WHERE
+    al.member_no = #{no}
+    AND at.alarm_type != 'reply'
+    UNION
+    SELECT
+        al.log_no,
+        al.type_no,
+        al.member_no,
+        al.content,
+        al.read_flag,
+        al.alarm_dt,
+        at.alarm_type,
+        NULL AS board_no,
+        NULL AS member_no,
+        NULL AS origin_content,
+        NULL AS trans_content,
+        NULL AS tag,
+        NULL AS like_cnt,
+        NULL AS view_cnt,
+        NULL AS board_public,
+        NULL AS reply_public,
+        NULL AS report_cnt,
+        NULL AS write_dt,
+        NULL AS update_dt,
+        NULL AS img_no,
+        NULL AS img_filename,
+        m.member_no as other_no,
+        m.name,
+        m.email,
+        m.created_dt,
+        m.gender,
+        m.filename,
+        m.addr,
+        m.pt,
+        m.info,
+        m.birth_dt,
+        m.tel,
+        m.pw_update_dt,
+        m.state,
+        m.auth,
+        NULL AS w_name,
+        NULL AS w_filename,
+        NULL AS reply_no,
+        NULL AS r_board_no,
+        NULL AS r_content
+    FROM
+        aim_alarm_log al
+    JOIN
+        aim_alarm_type at ON al.type_no = at.type_no
+    JOIN
+        aim_member m ON al.other_no = m.member_no
+    WHERE
+        al.member_no = #{no}
+        AND al.board_no IS NULL
+  </select>
+ 
+
+  </mapper>

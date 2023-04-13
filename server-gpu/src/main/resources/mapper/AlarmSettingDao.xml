@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bitcamp.app.dao.AlarmSettingDao">
+
+  <resultMap type="alarmSetting" id="alarmSettingMap">  
+    <id column="type_no" property="typeNo"/>
+    <result column="alarm_type" property="typeName"/>
+    <result column="description" property="description"/>
+    <result column="member_no" property="memberNo"/>
+  </resultMap>
+  
+  <insert id="insert" parameterType="alarmSetting">
+    insert into aim_alarm(type, member_no)
+    values (#{typeNo}, #{memberNo})
+  </insert>
+  
+  <delete id="delete" parameterType="alarmSetting">
+    delete from aim_alarm
+    where member_no=#{memberNo} and type=#{typeNo}
+  </delete>
+  
+
+  <select id="getAll" parameterType="int" resultMap="alarmSettingMap">
+    select
+      at.type_no,
+      at.alarm_type,
+      a.member_no
+    from aim_alarm_type at
+    left join aim_alarm a
+      on a.type=at.type_no and a.member_no = #{memberNo}
+    order by at.type_no
+  </select>
+  
+</mapper>

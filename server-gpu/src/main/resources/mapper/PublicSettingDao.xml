@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bitcamp.app.dao.PublicSettingDao">
+
+  <resultMap type="publicSetting" id="publicSettingMap">  
+    <id column="no" property="typeNo"/>
+    <result column="name" property="title"/>
+    <result column="description" property="description"/>
+    <result column="member_no" property="memberNo"/>
+    <result column="range_no" property="rangeNo"/>
+    <result column="state" property="rangeState"/>
+  </resultMap>
+  
+  <insert id="insert" parameterType="publicSetting">
+    insert into aim_hide_setting(member_no, no, range_no)
+    values (#{memberNo}, #{typeNo}, #{rangeNo})
+  </insert>
+  
+  <update id="update" parameterType="publicSetting">
+    update aim_hide_setting
+    set range_no=#{rangeNo}
+    where member_no=#{memberNo} and no=#{typeNo}
+  </update>
+
+  <delete id="delete" parameterType="publicSetting">
+
+  </delete>
+  
+
+  <select id="getAll" parameterType="int" resultMap="publicSettingMap">
+    select
+      il.no,
+      il.name,
+      il.description,
+      hs.member_no,
+      hs.range_no,
+      pr.state       
+    from aim_info_list il
+    left join aim_hide_setting hs 
+      on il.no=hs.no and hs.member_no = #{memberNo}
+    left join aim_public_range pr 
+      on hs.range_no=pr.range_no
+    order by il.no
+  </select>
+  
+</mapper>

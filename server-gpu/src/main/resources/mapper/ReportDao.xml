@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bitcamp.app.dao.ReportDao">
+
+  <resultMap type="report" id="reportMap">
+  <id column="board_no" property="boardNo"/>
+    <id column="reply_no" property="replyNo"/>
+    <id column="member_no" property="memberNo"/>
+    <result column="report_no" property="reportNo"/>
+    <result column="report_type" property="reportType"/>
+    <result column="report_content" property="content"/>
+    <result column="report_dt" property="reportDt"/>
+  </resultMap>
+  
+  
+   <insert id="boardReport" parameterType="report" >
+    insert into aim_report_board(board_no, member_no, report_no, report_content)
+    values(#{boardNo}, #{memberNo}, #{reportNo}, #{content})
+   </insert>
+  
+   <insert id="replyReport" parameterType="report" >
+    insert into aim_report_reply(reply_no, member_no, report_no, report_content)
+    values(#{replyNo}, #{memberNo}, #{reportNo}, #{content})
+   </insert>
+  
+  
+   <select id="findReportType" resultMap="reportMap">
+    select * from aim_report
+   </select>
+  
+  </mapper>

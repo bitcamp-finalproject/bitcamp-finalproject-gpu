@@ -1,0 +1,63 @@
+plugins {
+	id 'eclipse'
+	id 'java'
+	id 'org.springframework.boot' version '3.0.5'
+	id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group = 'bitcamp'
+version = '0.0.1-SNAPSHOT'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8' 
+    sourceCompatibility = '17'
+    targetCompatibility = '17'
+}
+
+eclipse {
+    project {
+        name = "server-gpu"
+    }
+    jdt {  
+      sourceCompatibility = 17
+      targetCompatibility = 17
+      javaRuntimeName = "JavaSE-17"
+    }
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	  implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation ('org.springframework.boot:spring-boot-starter-web') {
+      exclude group: 'org.springframework.boot', module:'spring-boot-starter-tomcat'
+    }
+    implementation 'org.springframework.boot:spring-boot-starter-undertow'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.0'
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
+    implementation 'org.springframework.boot:spring-boot-starter-mail:3.0.5'
+    implementation 'org.springframework:spring-context:6.0.7'
+    implementation 'org.springframework:spring-context-support:6.0.7'
+    implementation 'com.sun.mail:jakarta.mail:2.0.1'
+
+
+}
+
+//tasks.named('test') {
+//	useJUnitPlatform()
+//}

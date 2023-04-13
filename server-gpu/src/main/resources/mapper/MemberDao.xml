@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bitcamp.app.dao.MemberDao">
+
+  <resultMap type="member" id="memberMap">
+    <id column="member_no" property="no"/>
+    <result column="name" property="nickname"/>
+    <result column="email" property="email"/>
+    <result column="pw" property="password"/>
+    <result column="created_dt" property="createdDate"/>
+    <result column="gender" property="gender"/>
+    <result column="filename" property="profilePhoto"/>
+    <result column="addr" property="basicAddress"/>
+    <result column="pt" property="point"/>
+    <result column="info" property="information"/>
+    <result column="birth_dt" property="birthDate"/>
+    <result column="tel" property="tel"/>
+    <result column="pw_update_dt" property="passwordDate"/>
+    <result column="state" property="accountState"/>
+    <result column="auth" property="authLevel"/>
+    <result column="link" property="link"/>
+    <result column="last_login_dt" property="lastLoginDt"/>
+  </resultMap>
+
+  <insert id="insert" parameterType="member" 
+          useGeneratedKeys="true" keyProperty="no" keyColumn="member_no">
+    insert into aim_member(name, email, pw, pt, token, link)
+    values(#{nickname}, #{email}, sha2(#{password},256), 0, token, #{link})
+  </insert>
+  
+  <select id="findAll" resultMap="memberMap">
+    select *
+    from
+     aim_member
+  </select>
+  
+  <select id="findByNo" parameterType="int" resultMap="memberMap">
+    select
+      *
+    from
+      aim_member 
+    where
+      member_no=#{no}
+  </select>
+
+  <select id="findByEmailAndPassword" parameterType="map" resultMap="memberMap">
+    select
+      member_no,
+      name,
+      email,
+      created_dt,
+      gender,
+      filename,
+      addr,
+      pt,
+      info,
+      birth_dt,
+      tel,
+      pw_update_dt,
+      state,
+      auth,
+      link,
+      last_login_dt
+    from
+      aim_member
+    where
+      email=#{email}
+      and pw=sha2(#{password},256)
+  </select>
+  
+  <update id="lastLoginUpdate" parameterType="int">
+    UPDATE aim_member
+    SET last_login_dt = NOW()
+    WHERE member_no = #{no}
+  </update>
+  
+  <select id="findByEmail" parameterType="string" resultMap="memberMap">
+    select
+      member_no,
+      name,
+      email,
+      created_dt,
+      gender,
+      filename,
+      addr,
+      pt,
+      info,
+      birth_dt,
+      tel,
+      pw_update_dt,
+      state,
+      auth,
+      link
+    from
+      aim_member
+    where
+      email=#{email}
+  </select>
+
+  <select id="findByNickname" parameterType="string" resultMap="memberMap">
+    select
+      member_no,
+      name,
+      email,
+      created_dt,
+      gender,
+      filename,
+      addr,
+      pt,
+      info,
+      birth_dt,
+      tel,
+      pw_update_dt,
+      state,
+      auth,
+      link
+    from
+      aim_member
+    where
+      name=#{nickname}
+  </select>
+    
+  <select id="findByToken" parameterType="string" resultMap="memberMap">
+    select
+      member_no,
+      name,
+      email,
+      created_dt,
+      gender,
+      filename,
+      addr,
+      pt,
+      info,
+      birth_dt,
+      tel,
+      pw_update_dt,
+      state,
+      auth
+    from
+      aim_member
+    where
+      token=#{token}
+  </select>
+  
+  <update id="update" parameterType="member">
+    update aim_member
+    set 
+      gender=#{gender},
+      birth_dt=#{birthDate},
+      tel=#{tel},
+      addr=#{basicAddress},      
+      pw=CASE WHEN #{password} IS NOT NULL THEN sha2(#{password}, 256) ELSE pw END
+    where member_no=#{no}
+  </update>
+  
+  <update id="updateProfile" parameterType="member">
+    update aim_member
+    set filename=#{profilePhoto}
+    where member_no=#{no}
+  </update>
+
+  <update id="updateToken" parameterType="member">
+    update aim_member
+    set
+      token=#{token}
+    where
+      email=#{email}
+  </update>
+  
+  <update id="updateStateByToken" parameterType="string">
+    update aim_member
+    set
+      state=0
+    where
+      token=#{token}
+  </update>
+  
+  </mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bitcamp.app.dao.FaqDao">
+
+<resultMap type="bitcamp.app.vo.Faq" id="faqTypeMap">
+    <id column="faq_no" property="faqNo"/>
+    <result column="faq_type_no" property="faqTypeNo"/>
+    <result column="faq_type" property="faqType"/>
+    <result column="title" property="title"/>
+    <result column="content" property="content"/>
+    <result column="write_dt" property="writeDt"/>
+</resultMap>
+<select id="findFaqType" resultMap="faqTypeMap">
+    SELECT faq_type_no, faq_type FROM aim_faq_type;
+</select>
+<select id="findFaqByType" resultMap="faqTypeMap">
+    SELECT faq.faq_no, faq.title, faq.content, faq.write_dt,
+           type.faq_type_no, type.faq_type
+    FROM aim_faq faq
+    INNER JOIN aim_faq_type type ON faq.faq_type_no = type.faq_type_no
+    WHERE type.faq_type_no = #{faqTypeNo}
+</select>
+
+</mapper>

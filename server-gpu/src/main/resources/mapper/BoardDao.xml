@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bitcamp.app.dao.BoardDao">
+
+  <resultMap type="board" id="boardMap">
+    <id column="board_no" property="boardNo"/>
+    <result column="origin_content" property="originContent"/>
+    <result column="summary_content" property="summaryContent"/>
+    <result column="trans_content" property="transContent"/>
+    <result column="tag" property="tag"/>
+    <result column="like_cnt" property="likeCnt"/>
+    <result column="view_cnt" property="viewCnt"/>
+    <result column="board_public" property="boardPublic"/>
+    <result column="reply_public" property="replyPublic"/>
+    <result column="report_cnt" property="reportCnt"/>
+    <result column="write_dt" property="writeDt"/>
+    <result column="update_dt" property="updateDt"/>
+    <result column="img_no" property="photoNo"/>
+    <result column="img_filename" property="fileName"/>
+    
+    <association property="writer" javaType="member">
+      <id column="member_no" property="no"/>
+      <result column="name" property="nickname"/>
+      
+      <result column="filename" property="profilePhoto"/>
+    </association>
+  </resultMap>
+  
+  <insert id="insert" parameterType="board" 
+          useGeneratedKeys="true" keyProperty="boardNo" keyColumn="board_no">
+    insert into aim_board(member_no, origin_content, summary_content, trans_content)
+      values(#{writer.no}, #{originContent}, #{summaryContent}, #{transContent})
+  </insert>
+
+  <select id="findAll" resultMap="boardMap" parameterType="string">
+   SELECT 
+    b.board_no, 
+    b.member_no, 
+    b.origin_content, 
+    b.trans_content,
+    b.tag, 
+    b.like_cnt, 
+    b.view_cnt, 
+    b.board_public, 
+    b.reply_public, 
+    b.report_cnt, 
+    b.write_dt, 
+    b.update_dt, 
+    m.name, 
+    m.  filename, 
+    i.img_no, 
+    i.img_filename 
+  FROM 
+    aim_board b
+  INNER JOIN aim_member m ON b.member_no = m.member_no 
+  INNER JOIN aim_generated_img i ON b.board_no = i.board_no
+  WHERE 
+    (select count(range_no) from aim_hide_setting hs where hs.no='5' and hs.member_no=m.member_no and range_no=2) != 1 
+  <if test="keyword != '' and keyword != null">
+    AND 
+    (b.tag LIKE CONCAT('%', #{keyword}, '%')
+    OR b.origin_content LIKE CONCAT('%', #{keyword}, '%'))
+    AND b.board_public = 1
+  </if> 
+    ORDER BY RAND();
+  </select>
+  
+    <select id="findByNo" resultMap="boardMap" parameterType="int">
+    select 
+      b.board_no, 
+      b.origin_content, 
+      b.trans_content,
+      b.tag, 
+      b.like_cnt, 
+      b.view_cnt, 
+      b.board_public, 
+      b.reply_public, 
+      b.report_cnt, 
+      b.write_dt, 
+      b.update_dt, 
+      m.name, 
+      i.img_no, 
+      i.img_filename 
+    from 
+      aim_board b
+      inner join aim_member m on b.member_no = m.member_no 
+      inner join aim_generated_img i on b.board_no = i.board_no 
+    where 
+      b.board_no=#{no}
+  </select>
+  
+  <select id="findByMemberNo" resultMap="boardMap" parameterType="int">
+    select 
+      b.board_no, 
+      b.member_no, 
+      b.origin_content, 
+      b.trans_content,
+      b.tag, 
+      b.like_cnt, 
+      b.view_cnt, 
+      b.board_public, 
+      b.reply_public, 
+      b.report_cnt, 
+      b.write_dt, 
+      b.update_dt, 
+      m.name, 
+      m.filename, 
+      i.img_no, 
+      i.img_filename 
+    from 
+      aim_board b
+      inner join aim_member m on b.member_no = m.member_no 
+      inner join aim_generated_img i on b.board_no = i.board_no 
+    where 
+      m.member_no=#{no}
+  </select>
+  
+    <select id="findAllHot" resultMap="boardMap">
+SELECT 
+    b.board_no, 
+    b.member_no, 
+    b.origin_content, 
+    b.trans_content,
+    b.tag, 
+    (SELECT COUNT(*) FROM aim_like_board lb WHERE lb.board_no = b.board_no) AS like_cnt,
+    b.view_cnt, 
+    b.board_public, 
+    b.reply_public, 
+    b.report_cnt, 
+    b.write_dt, 
+    b.update_dt, 
+    m.name, 
+    m.filename, 
+    i.img_no, 
+    i.img_filename 
+  FROM 
+    aim_board b
+  INNER JOIN aim_member m ON b.member_no = m.member_no 
+  INNER JOIN aim_generated_img i ON b.board_no = i.board_no   
+  WHERE 
+    b.board_public = 1
+  ORDER BY 
+    like_cnt desc
+  </select>
+  
+    <select id="findAllRecent" resultMap="boardMap">
+   SELECT 
+    b.board_no, 
+    b.member_no, 
+    b.origin_content, 
+    b.trans_content,
+    b.tag, 
+    (SELECT COUNT(*) FROM aim_like_board lb WHERE lb.board_no = b.board_no) AS like_cnt,
+    b.view_cnt, 
+    b.board_public, 
+    b.reply_public, 
+    b.report_cnt, 
+    b.write_dt, 
+    b.update_dt, 
+    m.name, 
+    m.  filename, 
+    i.img_no, 
+    i.img_filename 
+  FROM 
+    aim_board b
+  INNER JOIN aim_member m ON b.member_no = m.member_no 
+  INNER JOIN aim_generated_img i ON b.board_no = i.board_no   
+  WHERE 
+    b.board_public = 1
+  ORDER BY 
+    b.write_dt desc
+  </select>
+  
+    <select id="findFollow" resultMap="boardMap" parameterType="int">
+	  SELECT 
+	    b.board_no, 
+	    b.member_no, 
+	    b.origin_content, 
+	    b.trans_content,
+	    b.tag, 
+	    (SELECT COUNT(*) FROM aim_like_board lb WHERE lb.board_no = b.board_no) AS like_cnt,
+	    b.view_cnt, 
+	    b.board_public, 
+	    b.reply_public, 
+	    b.report_cnt, 
+	    b.write_dt, 
+	    b.update_dt, 
+	    m.name, 
+	    m.filename, 
+	    i.img_no, 
+	    i.img_filename 
+	FROM 
+	    aim_board b
+	INNER JOIN aim_member m ON b.member_no = m.member_no 
+	INNER JOIN aim_generated_img i ON b.board_no = i.board_no   
+	WHERE 
+	    b.board_public = 1 AND
+	    (b.member_no = #{member_no} 
+	OR  
+		b.member_no 
+	IN 
+		(SELECT follower_no FROM aim_follow WHERE following_no = #{member_no})) 
+	ORDER BY 
+		b.write_dt desc
+      </select>
+  
+  
+  </mapper>

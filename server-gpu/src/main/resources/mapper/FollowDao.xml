@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bitcamp.app.dao.FollowDao">
+
+  <resultMap type="follow" id="followMap">
+    <id column="following_no" property="followingNo"/>
+    <id column="follower_no" property="followerNo"/>
+  </resultMap>
+  
+  <insert id="insert" parameterType="follow">
+    insert into aim_follow(following_no, follower_no) 
+    values(#{followingNo}, #{followerNo})
+  </insert>
+  
+  <delete id="delete" parameterType="follow">
+    delete from aim_follow 
+    where following_no=#{followingNo} and follower_no=#{followerNo} 
+  </delete>
+  
+
+  <select id="findAllFollowingNumbers" parameterType="int" resultType="java.lang.Integer">
+    select
+      follower_no
+    from
+      aim_follow 
+    where
+      following_no=#{followingNo}
+  </select>
+  
+  <select id="findAllFollowerNumbers" parameterType="int" resultType="java.lang.Integer">
+    select
+      following_no
+    from
+      aim_follow 
+    where
+      follower_no=#{followerNo}
+  </select>
+  
+  <select id="checkState" parameterType="follow" resultType="int">
+  select 
+    count(follower_no)
+  from 
+    aim_follow
+  where 
+    following_no=#{followingNo} and follower_no=#{followerNo}    
+</select>
+
+  <select id="getFollowingCount" parameterType="int" resultType="int">
+  select 
+    count(follower_no)
+  from 
+    aim_follow
+  where 
+    following_no=#{followingNo}
+</select>
+
+  <select id="getFollowerCount" parameterType="int" resultType="int">
+  select 
+    count(follower_no)
+  from 
+    aim_follow
+  where 
+    follower_no=#{followerNo}    
+</select>
+  
+</mapper>
