@@ -24,11 +24,10 @@ public class App implements WebMvcConfigurer{
       public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
         .allowCredentials(true)  // SpringBoot + axios 사용 관련 AuthController 에서 HttpSession 동일 객체 사용을 위한 설정
-        .allowedOrigins("http://localhost:3000",
-            "http://127.0.0.1:3000",
-            "http://localhost:3001",
-            "http://127.0.0.1:3001",
-            "http://223.130.129.169")
+        .allowedOrigins(
+            "http://localhost:8080",
+            "http://127.0.0.1:8080",
+            "http://223.130.129.169:8080")
         .allowedMethods("*");
       }
     };
