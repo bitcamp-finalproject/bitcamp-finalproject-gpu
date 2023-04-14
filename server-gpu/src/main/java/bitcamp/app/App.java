@@ -27,6 +27,8 @@ public class App implements WebMvcConfigurer{
         .allowedOrigins(
             "http://localhost:8080",
             "http://127.0.0.1:8080",
+            "http://localhost:8085",
+            "http://127.0.0.1:8085",
             "http://223.130.129.169:8080")
         .allowedMethods("*");
       }
