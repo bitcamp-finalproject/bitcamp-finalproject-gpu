@@ -45,7 +45,7 @@ public class ImgGenController {
       command = "python \"" + scriptPath + "\" \"" + transContent + "\" " + fileName;
 
     } else {
-      scriptPath = "src" + File.separator + "main" + File.separator + "pythonapp" + File.separator + "simple_cmd.py";
+      scriptPath = baseDir + File.separator + "src" + File.separator + "main" + File.separator + "pythonapp" + File.separator + "simple_cmd.py";
       command = "python3.8 " + scriptPath + " \"" + transContent + "\" " + fileName;
 
     }
