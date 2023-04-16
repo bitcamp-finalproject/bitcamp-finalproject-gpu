@@ -46,7 +46,8 @@ public class ImgGenController {
 
     } else {
       scriptPath = ".." + File.separator + ".." + File.separator + "pythonapp" + File.separator + "simple_cmd.py";
-      command = "python3.8 " + scriptPath + " \"" + transContent + "\" " + fileName;
+//      command = "python3.8 " + scriptPath + " \"" + transContent + "\" " + fileName;
+      command = "pwd";
 
     }
     
@@ -54,7 +55,7 @@ public class ImgGenController {
     log.info("command >>> " + command);
 
     try {
-      Process process = Runtime.getRuntime().exec("pwd");
+      Process process = Runtime.getRuntime().exec(command);
       BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
       BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
       String s = null;
