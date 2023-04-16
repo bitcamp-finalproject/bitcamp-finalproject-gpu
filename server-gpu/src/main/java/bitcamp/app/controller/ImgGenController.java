@@ -45,9 +45,10 @@ public class ImgGenController {
       command = "python \"" + scriptPath + "\" \"" + transContent + "\" " + fileName;
 
     } else {
-      scriptPath = ".." + File.separator + ".." + File.separator + "pythonapp" + File.separator + "simple_cmd.py";
-//      command = "python3.8 " + scriptPath + " \"" + transContent + "\" " + fileName;
-      command = "pwd";
+      scriptPath = File.separator + "git" + File.separator + "bitcamp-finalproject-gpu" + File.separator + "server-gpu" + 
+        File.separator + "src" + File.separator + "main" + File.separator + "pythonapp" + File.separator + "simple_cmd.py";
+      command = "python3.8 " + scriptPath + " \"" + transContent + "\" " + fileName;
+      // command = "pwd";  // "/"
 
     }
     
