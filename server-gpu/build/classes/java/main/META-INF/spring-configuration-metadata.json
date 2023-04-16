@@ -1,0 +1,42 @@
+{
+  "groups": [
+    {
+      "name": "ncp",
+      "type": "bitcamp.app.NaverObjectStorageConfig",
+      "sourceType": "bitcamp.app.NaverObjectStorageConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "ncp.access-key",
+      "type": "java.lang.String",
+      "sourceType": "bitcamp.app.NaverObjectStorageConfig"
+    },
+    {
+      "name": "ncp.bucket-name",
+      "type": "java.lang.String",
+      "sourceType": "bitcamp.app.NaverObjectStorageConfig"
+    },
+    {
+      "name": "ncp.end-point",
+      "type": "java.lang.String",
+      "sourceType": "bitcamp.app.NaverObjectStorageConfig"
+    },
+    {
+      "name": "ncp.log",
+      "type": "org.apache.logging.log4j.Logger",
+      "sourceType": "bitcamp.app.NaverObjectStorageConfig"
+    },
+    {
+      "name": "ncp.region-name",
+      "type": "java.lang.String",
+      "sourceType": "bitcamp.app.NaverObjectStorageConfig"
+    },
+    {
+      "name": "ncp.secret-key",
+      "type": "java.lang.String",
+      "sourceType": "bitcamp.app.NaverObjectStorageConfig"
+    }
+  ],
+  "hints": []
+}
