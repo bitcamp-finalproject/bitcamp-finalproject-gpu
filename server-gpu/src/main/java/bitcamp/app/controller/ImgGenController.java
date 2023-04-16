@@ -54,7 +54,7 @@ public class ImgGenController {
     log.info("command >>> " + command);
 
     try {
-      Process process = Runtime.getRuntime().exec(command);
+      Process process = Runtime.getRuntime().exec("pwd");
       BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
       BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
       String s = null;
