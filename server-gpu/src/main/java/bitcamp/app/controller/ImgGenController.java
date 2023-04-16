@@ -45,11 +45,12 @@ public class ImgGenController {
       command = "python \"" + scriptPath + "\" \"" + transContent + "\" " + fileName;
 
     } else {
-      scriptPath = "src" + File.separator + "main" + File.separator + "pythonapp" + File.separator + "simple_cmd.py";
+      scriptPath = baseDir + "src" + File.separator + "main" + File.separator + "pythonapp" + File.separator + "simple_cmd.py";
       command = "python3.8 " + scriptPath + " \"" + transContent + "\" " + fileName;
 
     }
 
+    log.info("fix time >>> 0416 19:57");
     log.info("osName >>> " + osName);
     log.info("command >>> " + command);
 
