@@ -9,7 +9,7 @@ prompt_str = sys.argv[1]
 filename = sys.argv[2]
 
 txtname = "prompt.txt"
-dirname = "src/main/pythonapp/results/"
+dirname = "/git/bitcamp-finalproject-gpu/server-gpu/src/main/pythonapp/results/"
 output_path = os.path.join(dirname, txtname)
 
 # results 디렉토리가 없으면 생성

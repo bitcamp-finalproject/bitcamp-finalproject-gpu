@@ -53,7 +53,7 @@ public class ImgGenController {
       // command = "pwd";  // "/"
 
     }
-    
+
     log.info("osName >>> " + osName);
     log.info("command >>> " + command);
 
@@ -75,11 +75,11 @@ public class ImgGenController {
 
       // 상대 경로를 사용하여 이미지 파일 디렉토리 경로를 설정합니다.
       String imageDir = "src" + File.separator + "main" + File.separator + "pythonapp" + File.separator + "results" + File.separator;
-      //log.info("imageDir >>> " + imageDir); //imageDir >>> src\main\pythonapp\results\
+      //log.info("imageDir >>> " + imageDir); //imageDir >>> src/main/pythonapp/results/
 
       // 이미지 파일의 전체 경로를 생성합니다.
       String filePath = baseDir + File.separator + imageDir + fileName;
-      //log.info("filePath >>> " + filePath); //filePath >>> C:\Users\bitcamp\git\bitcamp-finalproject\total\back-end\src\main\pythonapp\results\f2df4782-2720-4b5a-8e85-f6b512c0a465.png
+      //log.info("filePath >>> " + filePath); //filePath >>> /git/bitcamp-finalproject-gpu/server-gpu/src/main/pythonapp/results/f2df4782-2720-4b5a-8e85-f6b512c0a465.png
 
       // 이미지 파일을 File 객체에 담습니다.
       File file = new File(filePath);
