@@ -54,7 +54,8 @@ dependencies {
     implementation 'org.springframework:spring-context:6.0.7'
     implementation 'org.springframework:spring-context-support:6.0.7'
     implementation 'com.sun.mail:jakarta.mail:2.0.1'
-
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    
 
 }
 

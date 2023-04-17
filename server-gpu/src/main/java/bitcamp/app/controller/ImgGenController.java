@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.socket.WebSocketSession;
 import bitcamp.app.NaverObjectStorageConfig;
+import bitcamp.app.handler.ProgressHandler;
 import bitcamp.app.service.ObjectStorageService;
 import bitcamp.util.CustomMultipartFile;
 
@@ -26,6 +28,7 @@ public class ImgGenController {
 
   @Autowired private ObjectStorageService objectStorageService;
   @Autowired private NaverObjectStorageConfig naverObjectStorageConfig;
+  @Autowired private ProgressHandler progressHandler;
 
   @PostMapping("generate")
   public Object generate(@RequestParam String transContent, String fileName) {
@@ -66,11 +69,15 @@ public class ImgGenController {
 
       while ((s = stdInput.readLine()) != null) {
         log.info("stdInput >>> " + s);
-        //클라이언트에게 진행상태 바로 % 표시
+
+        //클라이언트에게 진행상태 전송
+        for (WebSocketSession session : progressHandler.getSessions()) {
+          progressHandler.sendProgress(s, session);
+        }
       }
 
       while ((s = stdError.readLine()) != null) {
-        log.info("stdError >>> " + s);
+        log.error("stdError >>> " + s);
       }
       log.info("stable diffusion 이미지 생성 완료!");
 
