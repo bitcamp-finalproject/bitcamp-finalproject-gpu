@@ -33,9 +33,8 @@ public class ImgGenController {
     log.info("transContent >>> " + transContent);
     log.info("fileName >>> " + fileName);
 
-    // 오늘은 몰디브에서의 휴양 일정이었습니다. 아침 일찍 일어나 해변을 걸으며 몰디브의 아름다운 풍경을 감상했습니다. 해안가에서는 스노클링을 즐기는 사람들이 많았고, 내가 챙긴 노르딕 스타킹을 신고 바다 속으로 뛰어들었습니다. 투명한 바다속에서는 다양한 물고기들이 떠다니며 내게 귀엽게 다가와 함께 수영했습니다. 몰디브의 아름다운 자연환경과 더불어 즐거운 수상 스포츠를 즐길 수 있는 멋진 곳이라는 생각이 들었습니다.
     String bucketName = naverObjectStorageConfig.getBucketName();
-    String baseDir = "";  // C:\Users\bitcamp\git\bitcamp-finalproject\total\back-end
+    String baseDir = "";
     String pythonInterpreterPath = "/git/stable-diffusion-keras/venv/bin/python3";
     String scriptPath = "";
     String command = "";
@@ -57,8 +56,10 @@ public class ImgGenController {
     log.info("osName >>> " + osName);
     log.info("command >>> " + command);
 
+    String[] commandArray = new String[]{pythonInterpreterPath, scriptPath, transContent, fileName};
+
     try {
-      Process process = Runtime.getRuntime().exec(command);
+      Process process = Runtime.getRuntime().exec(commandArray);
       BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
       BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
       String s = null;
