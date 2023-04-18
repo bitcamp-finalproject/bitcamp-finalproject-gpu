@@ -14,6 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 import bitcamp.app.NaverObjectStorageConfig;
 import bitcamp.app.service.ObjectStorageService;
 import bitcamp.util.CustomMultipartFile;
+import bitcamp.util.ErrorCode;
+import bitcamp.util.RestResult;
+import bitcamp.util.RestStatus;
 
 @RestController
 public class ImgGenController {
@@ -35,7 +38,7 @@ public class ImgGenController {
 
     String bucketName = naverObjectStorageConfig.getBucketName();
     String baseDir = "";
-    String pythonInterpreterPath = "/git/stable-diffusion-keras/venv/bin/python3";
+    String pythonInterpreterPath = File.separator + "git"  + File.separator + "stable-diffusion-keras"  + File.separator + "venv"  + File.separator + "bin"  + File.separator + "python3";
     String scriptPath = "";
     String command = "";
     String osName = System.getProperty("os.name").toLowerCase();
@@ -46,7 +49,7 @@ public class ImgGenController {
       command = "python \"" + scriptPath + "\" \"" + transContent + "\" " + fileName;
 
     } else {
-      baseDir = "/git/bitcamp-finalproject-gpu/server-gpu";
+      baseDir = File.separator + "git" + File.separator + "bitcamp-finalproject-gpu" + File.separator + "server-gpu";
       scriptPath = baseDir + File.separator + "src" + File.separator + "main" + File.separator + "pythonapp" + File.separator + "simple_cmd.py";
       command = pythonInterpreterPath + " " + scriptPath + " \"" + transContent + "\" " + fileName;
       // command = "pwd";  // "/"
@@ -72,7 +75,7 @@ public class ImgGenController {
       while ((s = stdError.readLine()) != null) {
         log.info("stdError >>> " + s);
       }
-      log.info("stable diffusion 이미지 생성 완료!");
+      log.info("Complete stable diffusion Image generating!");
 
       // 상대 경로를 사용하여 이미지 파일 디렉토리 경로를 설정합니다.
       String imageDir = "src" + File.separator + "main" + File.separator + "pythonapp" + File.separator + "results" + File.separator;
@@ -83,22 +86,36 @@ public class ImgGenController {
       //log.info("filePath >>> " + filePath); //filePath >>> /git/bitcamp-finalproject-gpu/server-gpu/src/main/pythonapp/results/f2df4782-2720-4b5a-8e85-f6b512c0a465.png
 
       // 이미지 파일을 File 객체에 담습니다.
-      File file = new File(filePath);
+      try {
+        File file = new File(filePath);
 
-      // file 을 multipartFile 로 변환
-      MultipartFile multipartFile = new CustomMultipartFile(file);
+        // file 을 multipartFile 로 변환
+        MultipartFile multipartFile = new CustomMultipartFile(file);
 
-      String fileUrl = objectStorageService.uploadFile(bucketName, "board/", multipartFile);
-      // log.info("fileUrl >>> " + fileUrl);  //fileUrl >>> https://project-bucket1.kr.object.ncloudstorage.com/board/8acfad7b-0ff4-46ca-b921-322133575836
+        String fileUrl = objectStorageService.uploadFile(bucketName, "board/", multipartFile);
+        // log.info("fileUrl >>> " + fileUrl);  //fileUrl >>> https://project-bucket1.kr.object.ncloudstorage.com/board/8acfad7b-0ff4-46ca-b921-322133575836
 
-      return fileUrl;
+        return new RestResult()
+            .setData(fileUrl)
+            .setStatus(RestStatus.SUCCESS);
+
+      } catch (NullPointerException e) {
+
+        log.error("File doesn't exist! Error: ", e);
+
+        return new RestResult()
+            .setErrorCode(ErrorCode.rest.NO_DATA)
+            .setStatus(RestStatus.FAILURE);
+      }
 
     } catch (IOException e) {
-      log.error("명령 프롬프트 에러 발생!: " + command, e);
 
+      log.error("Error occured while executing python! Error: ", e);
+
+      return new RestResult()
+          .setErrorCode(ErrorCode.rest.SERVER_EXCEPTION)
+          .setStatus(RestStatus.FAILURE);
     }
-
-    return null;
 
   }
 
